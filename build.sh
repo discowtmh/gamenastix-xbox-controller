@@ -236,7 +236,7 @@ avr-objcopy -O ihex -R .eeprom ${ELF} ${HEX}
 avr-size -A ${ELF}
 
 echo "Flashing.."
-python reset.py ${DEVICE}
+python reset.py ${DEVICE} && sleep 1
 avrdude -C${ARDUINO_SDK_PATH}/etc/avrdude.conf -q -q -patmega32u4 -cavr109 -P${DEVICE} -b57600 -D -Uflash:w:${HEX}:i
 
 echo "..done."
