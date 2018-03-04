@@ -1,0 +1,6 @@
+[submodule "arduino/sdk"]
+	path = arduino/sdk
+	url = https://github.com/adiog/embed-arduino-sdk
+[submodule "arduino/std"]
+	path = arduino/std
+	url = https://github.com/adiog/embed-sparkfun-std
