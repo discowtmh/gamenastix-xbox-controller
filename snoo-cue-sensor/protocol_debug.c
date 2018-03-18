@@ -11,6 +11,8 @@ const char *getPayloadLabel(uint8_t payloadId)
             return "PAYLOAD_PING";
         case PAYLOAD_PONG:
             return "PAYLOAD_PONG";
+        case PAYLOAD_SENSOR:
+            return "PAYLOAD_SENSOR";
         default:
             return "UNKNOWN";
     }
@@ -43,6 +45,16 @@ int formatPongPayload(char *outputBuffer, const PongPayload *payload)
         payload->pong);
 }
 
+int formatSensorPayload(char *outputBuffer, const SensorPayload *payload)
+{
+    return sprintf(
+        outputBuffer,
+        "[%02.3f %02.3f %02.3f]",
+        payload->accelerometerMSS[0],
+        payload->accelerometerMSS[1],
+        payload->accelerometerMSS[2]);
+}
+
 int formatPayload(char *outputBuffer, const uint8_t *packet)
 {
     switch (packet[HEADER_PAYLOAD_ID_OFFSET])
@@ -56,6 +68,11 @@ int formatPayload(char *outputBuffer, const uint8_t *packet)
         {
             const PongPacket *pongPacket = (const PongPacket *)packet;
             return formatPongPayload(outputBuffer, &pongPacket->payload);
+        }
+        case PAYLOAD_SENSOR:
+        {
+            const SensorPacket *sensorPacket = (const SensorPacket *) packet;
+            return formatSensorPayload(outputBuffer, &sensorPacket->payload);
         }
         default:
         {

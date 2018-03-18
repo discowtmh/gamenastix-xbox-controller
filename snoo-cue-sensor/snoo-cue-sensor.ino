@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <protocol.h>
+#include <protocol_debug.h>
 #include <MPU9250.h>
 
 
@@ -37,16 +38,17 @@ uint8_t bufferIndex = 0U;
 void processIncomingPacket(const uint8_t *packet)
 {
     const PacketHeader *header = (const PacketHeader *)packet;
+
     switch (header->payloadId)
     {
         case PAYLOAD_PING:
         {
-            const PingPacket * pingPacket = (const PingPacket *) packet;
+            const PingPacket *pingPacket = (const PingPacket *)packet;
 
             PongPacket pongPacket = {0};
             pongPacket.payload.pong = pingPacket->payload.ping * pingPacket->payload.ping;
 
-            setHeader((uint8_t*)&pongPacket, PAYLOAD_PONG);
+            setHeader((uint8_t *)&pongPacket, PAYLOAD_PONG);
             Serial.write((uint8_t *)&pongPacket, sizeof(PongPacket));
         }
         default:
@@ -56,6 +58,8 @@ void processIncomingPacket(const uint8_t *packet)
 
 void loop()
 {
+    static uint32_t lastSensorSent = 0U;
+
     if (Serial.available() > 0)
     {
         uint8_t incomingByte = (uint8_t)Serial.read();
@@ -63,8 +67,10 @@ void loop()
         processIncomingByte(buffer, &bufferIndex, BUFFER_SIZE, (uint32_t)millis(), incomingByte, processIncomingPacket);
     }
 
-    if (millis() % 100U == 0U)
+    uint32_t millisNow = millis();
+    if ((millisNow % 1000U == 0U) && (millisNow != lastSensorSent))
     {
+        lastSensorSent = millisNow;
         SensorPacket sensorPacket = {0};
 
         IMU.readSensor();

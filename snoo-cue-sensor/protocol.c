@@ -35,7 +35,7 @@ const uint8_t payloadLengthById[8] = {
 
 extern inline uint8_t getPacketLength(const uint8_t *packet)
 {
-    return packetLengthById[packet[HEADER_PAYLOAD_LENGTH_OFFSET]];
+    return packetLengthById[packet[HEADER_PAYLOAD_ID_OFFSET]];
 }
 
 extern inline int verifyPacket(const uint8_t *packet)
@@ -121,7 +121,7 @@ void processIncomingByte(uint8_t *buffer,
             }
             else
             {
-                shiftPacket(buffer, bufferIndex);
+                shiftNoise(buffer, bufferIndex);
             }
         }
     }
