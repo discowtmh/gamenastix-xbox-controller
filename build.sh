@@ -28,6 +28,8 @@ ELF=${BUILD_DIR}/${PROJECT_NAME}.elf
 HEX=${BUILD_DIR}/${PROJECT_NAME}.hex
 EEP=${BUILD_DIR}/${PROJECT_NAME}.eep
 
+cp -f ${CPP} ${SOURCE_DIR}/${PROJECT_NAME}.ino
+
 AVR_CORE=${BUILD_DIR}/libArduino.a
 
 AUTODETECT_SOURCES="`find ${SOURCE_DIR} -name "*.c" -or -name "*.cpp" -or -name "*.cc"` ${CPP}"

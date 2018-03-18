@@ -1,42 +1,53 @@
-/*
-  Blink
-
-  Turns an LED on for one second, then off for one second, repeatedly.
-
-  Most Arduinos have an on-board LED you can control. On the UNO, MEGA and ZERO
-  it is attached to digital pin 13, on MKR1000 on pin 6. LED_BUILTIN is set to
-  the correct LED pin independent of which board is used.
-  If you want to know what pin the on-board LED is connected to on your Arduino
-  model, check the Technical Specs of your board at:
-  https://www.arduino.cc/en/Main/Products
-
-  modified 8 May 2014
-  by Scott Fitzgerald
-  modified 2 Sep 2016
-  by Arturo Guadalupi
-  modified 8 Sep 2016
-  by Colby Newman
-
-  This example code is in the public domain.
-
-  http://www.arduino.cc/en/Tutorial/Blink
-*/
-
 #include <Arduino.h>
+#include <MPU9250.h>
 
-#define LED_PROMICRO 17
 
-// the setup function runs once when you press reset or power the board
+// an MPU9250 object with the MPU-9250 sensor on SPI bus 0 and chip select pin 10
+MPU9250 IMU(SPI,10);
+int status;
+
+
 void setup() {
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(LED_PROMICRO, OUTPUT);
+  // serial to display data
+  Serial.begin(115200);
+  while(!Serial) {}
+
+  // start communication with IMU 
+  status = IMU.begin();
+  if (status < 0) {
+    Serial.println("IMU initialization unsuccessful");
+    Serial.println("Check IMU wiring or try cycling power");
+    Serial.print("Status: ");
+    Serial.println(status);
+    while(1) {}
+  }
 }
 
-// the loop function runs over and over again forever
+
 void loop() {
-  digitalWrite(LED_PROMICRO, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);                       // wait for a second
-  digitalWrite(LED_PROMICRO, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);                       // wait for a second
-}
+  // read the sensor
+  IMU.readSensor();
 
+  // display the data
+  Serial.print(IMU.getAccelX_mss(),6);
+  Serial.print("\t");
+  Serial.print(IMU.getAccelY_mss(),6);
+  Serial.print("\t");
+  Serial.print(IMU.getAccelZ_mss(),6);
+  Serial.print("\t");
+  Serial.print(IMU.getGyroX_rads(),6);
+  Serial.print("\t");
+  Serial.print(IMU.getGyroY_rads(),6);
+  Serial.print("\t");
+  Serial.print(IMU.getGyroZ_rads(),6);
+  Serial.print("\t");
+  Serial.print(IMU.getMagX_uT(),6);
+  Serial.print("\t");
+  Serial.print(IMU.getMagY_uT(),6);
+  Serial.print("\t");
+  Serial.print(IMU.getMagZ_uT(),6);
+  Serial.print("\t");
+  Serial.println(IMU.getTemperature_C(),6);
+
+  delay(100);
+}
