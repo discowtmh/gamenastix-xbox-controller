@@ -5,7 +5,7 @@ cd $(dirname $0)
 set -e
 set -o xtrace
 
-PROJECT_NAME=promicro-project
+PROJECT_NAME=snoo-cue-sensor
 ARDUINO_SDK_PATH=./arduino/sdk
 ARDUINO_STD_PATH=./arduino/std
 ARDUINO_CORE_PATH=${ARDUINO_STD_PATH}/cores/arduino
