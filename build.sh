@@ -30,6 +30,7 @@ EEP=${BUILD_DIR}/${PROJECT_NAME}.eep
 
 cp -f ${CPP} ${SOURCE_DIR}/${PROJECT_NAME}.ino
 cp -f ./deps/snoo-cue-protocol/src/*.c ${SOURCE_DIR}
+cp -f ./deps/KalmanFilter/Kalman.cpp ${SOURCE_DIR}
 
 AVR_CORE=${BUILD_DIR}/libArduino.a
 
@@ -43,6 +44,7 @@ mkdir -p ${BUILD_DIR}
 PROJECT_INCLUDES="                                               \
   -I./${PROJECT_NAME}                                            \
   -I./deps/snoo-cue-protocol/include                             \
+  -I./deps/KalmanFilter                                          \
   -I./src"
 
 ASM_FLAGS="                                                      \

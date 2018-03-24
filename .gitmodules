@@ -7,3 +7,6 @@
 [submodule "deps/snoo-cue-protocol"]
 	path = deps/snoo-cue-protocol
 	url = /home/adiog/workspace/snoo-cue-protocol/
+[submodule "deps/KalmanFilter"]
+	path = deps/KalmanFilter
+	url = https://github.com/adiog/embed-KalmanFilter

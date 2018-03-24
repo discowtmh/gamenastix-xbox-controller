@@ -1,35 +1,43 @@
 #include <Arduino.h>
+#include <SensorFusion.h>
 #include <protocol.h>
 #include <protocol_debug.h>
 #include <MPU9250.h>
 
-
-// an MPU9250 object with the MPU-9250 sensor on SPI bus 0 and chip select pin 10
 MPU9250 IMU(SPI, 10);
 int status;
 
+SensorFusion sensorFusion;
 
 void setup()
 {
-    // serial to display data
     Serial.begin(115200);
     while (!Serial)
     {
     }
 
-    // start communication with IMU
     status = IMU.begin();
     if (status < 0)
     {
-        Serial.println("IMU initialization unsuccessful");
-        Serial.println("Check IMU wiring or try cycling power");
-        Serial.print("Status: ");
-        Serial.println(status);
         while (1)
         {
+            Serial.println("IMU initialization unsuccessful");
+            Serial.println("Check IMU wiring or try cycling power");
+            Serial.print("Status: ");
+            Serial.println(status);
+            delay(10000);
         }
     }
+
+    float accelerometerRawValues[3] = {
+        IMU.getAccelX_mss(),
+        IMU.getAccelY_mss(),
+        IMU.getAccelZ_mss()};
+
+    sensorFusion.init(accelerometerRawValues);
 }
+
+static const unsigned int timeDelta = 1000U / FREQUENCY;
 
 #define BUFFER_SIZE (64U)
 uint8_t buffer[BUFFER_SIZE];
@@ -68,7 +76,7 @@ void loop()
     }
 
     uint32_t millisNow = millis();
-    if ((millisNow % 1000U == 0U) && (millisNow != lastSensorSent))
+    if (((millisNow % timeDelta) == 0U) && (millisNow != lastSensorSent))
     {
         lastSensorSent = millisNow;
         SensorPacket sensorPacket = {0};
@@ -85,6 +93,15 @@ void loop()
         sensorPacket.payload.magnetometerMicroT[1] = IMU.getMagY_uT();
         sensorPacket.payload.magnetometerMicroT[2] = IMU.getMagZ_uT();
         sensorPacket.payload.temperatureCelcius = IMU.getTemperature_C();
+
+        sensorFusion.apply(
+                sensorPacket.payload.accelerometerMSS,
+                sensorPacket.payload.gyroscopeRads,
+                sensorPacket.payload.magnetometerMicroT,
+                sensorPacket.payload.xAngleAfterFusion,
+                sensorPacket.payload.yAngleAfterFusion,
+                timeDelta
+        );
 
         setHeader((uint8_t *)&sensorPacket, PAYLOAD_SENSOR);
 
