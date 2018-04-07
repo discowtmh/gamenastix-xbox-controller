@@ -11,7 +11,7 @@ ARDUINO_STD_PATH=./arduino/std
 ARDUINO_CORE_PATH=${ARDUINO_STD_PATH}/cores/arduino
 ARDUINO_VARIANT_PATH=${ARDUINO_STD_PATH}/variants/promicro
 
-ARDUINO_LIBRARIES="HID SoftwareSerial SPI Wire Keyboard"
+ARDUINO_LIBRARIES="HID SoftwareSerial SPI Wire Keyboard Bridge Esplora Ethernet GSM Keyboard LiquidCrystal Mouse SD Servo SpacebrewYun Stepper Temboo TFT WiFi"
 ARDUINO_HEADER_ONLY_LIBRARIES="EEPROM"
 
 DEFAULT_DEVICE=`ls -1 /dev/ttyACM* | head -1`
