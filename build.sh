@@ -5,13 +5,13 @@ cd $(dirname $0)
 set -e
 set -o xtrace
 
-PROJECT_NAME=snoo-cue-sensor
+PROJECT_NAME=promicro-project
 ARDUINO_SDK_PATH=./arduino/sdk
 ARDUINO_STD_PATH=./arduino/std
 ARDUINO_CORE_PATH=${ARDUINO_STD_PATH}/cores/arduino
 ARDUINO_VARIANT_PATH=${ARDUINO_STD_PATH}/variants/promicro
 
-ARDUINO_LIBRARIES="HID SoftwareSerial SPI Wire"
+ARDUINO_LIBRARIES="HID SoftwareSerial SPI Wire Keyboard"
 ARDUINO_HEADER_ONLY_LIBRARIES="EEPROM"
 
 DEFAULT_DEVICE=`ls -1 /dev/ttyACM* | head -1`
@@ -29,8 +29,6 @@ HEX=${BUILD_DIR}/${PROJECT_NAME}.hex
 EEP=${BUILD_DIR}/${PROJECT_NAME}.eep
 
 cp -f ${CPP} ${SOURCE_DIR}/${PROJECT_NAME}.ino
-cp -f ./deps/snoo-cue-protocol/src/*.c ${SOURCE_DIR}
-cp -f ./deps/KalmanFilter/Kalman.cpp ${SOURCE_DIR}
 
 AVR_CORE=${BUILD_DIR}/libArduino.a
 
@@ -41,11 +39,18 @@ export PATH=${TOOL_DIR}:$PATH
 
 mkdir -p ${BUILD_DIR}
 
+LIBRARY_INCLUDES=""
+for library in ${ARDUINO_LIBRARIES}; do
+  LIBRARY_SOURCE_DIR=${ARDUINO_STD_PATH}/libraries/${library}/src
+  LIBRARY_INCLUDES="${LIBRARY_INCLUDES} -I${LIBRARY_SOURCE_DIR}"
+done
+
 PROJECT_INCLUDES="                                               \
   -I./${PROJECT_NAME}                                            \
   -I./deps/snoo-cue-protocol/include                             \
   -I./deps/KalmanFilter                                          \
-  -I./src"
+  -I./src                                                        \
+  ${LIBRARY_INCLUDES}"
 
 ASM_FLAGS="                                                      \
     -c                                                           \
