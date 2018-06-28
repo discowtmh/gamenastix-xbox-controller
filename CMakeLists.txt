@@ -1,9 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
-PROJECT(promicro-project CXX)
+PROJECT(treadmill-t2-controller CXX)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/arduino/sdk/avr/include)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/arduino/std/cores/arduino)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/arduino/std/variants/promicro)
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/deps/xinput)
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME})
 
@@ -25,3 +27,4 @@ add_custom_target(
 add_library(fake-${PROJECT_NAME}-to-collect-includes
     ${CMAKE_CURRENT_SOURCE_DIR}/src/${PROJECT_NAME}.cpp ${sources} ${headers}
 )
+

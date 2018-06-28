@@ -5,7 +5,7 @@ cd $(dirname $0)
 set -e
 set -o xtrace
 
-PROJECT_NAME=promicro-project
+PROJECT_NAME=treadmill-t2-controller
 ARDUINO_SDK_PATH=./arduino/sdk
 ARDUINO_STD_PATH=./arduino/std
 ARDUINO_CORE_PATH=${ARDUINO_STD_PATH}/cores/arduino
@@ -31,6 +31,7 @@ EEP=${BUILD_DIR}/${PROJECT_NAME}.eep
 cp -f ${CPP} ${SOURCE_DIR}/${PROJECT_NAME}.ino
 
 AVR_CORE=${BUILD_DIR}/libArduino.a
+XINPUT_LIB=${BUILD_DIR}/libXInputPadMicro.a
 
 AUTODETECT_SOURCES="`find ${SOURCE_DIR} -name "*.c" -or -name "*.cpp" -or -name "*.cc"` ${CPP}"
 AUTODETECT_HEADERS="`find ${SOURCE_DIR} -name "*.h"`"
@@ -38,6 +39,8 @@ AUTODETECT_HEADERS="`find ${SOURCE_DIR} -name "*.h"`"
 export PATH=${TOOL_DIR}:$PATH
 
 mkdir -p ${BUILD_DIR}
+
+(cd deps/xinput && make lib) && cp deps/xinput/libXInputPadMicro.a ${XINPUT_LIB}
 
 LIBRARY_INCLUDES=""
 for library in ${ARDUINO_LIBRARIES}; do
@@ -47,8 +50,9 @@ done
 
 PROJECT_INCLUDES="                                               \
   -I./${PROJECT_NAME}                                            \
-  -I./deps/snoo-cue-protocol/include                             \
-  -I./deps/KalmanFilter                                          \
+  -I./deps/xinput/                                               \
+  -I./deps/xinput/Config                                         \
+  -I./deps/xinput/LUFA                                           \
   -I./src                                                        \
   ${LIBRARY_INCLUDES}"
 
@@ -72,6 +76,7 @@ ASM_FLAGS="                                                      \
     ${PROJECT_INCLUDES}"
 
 C_CORE_FLAGS="                                                   \
+    -pipe -gdwarf-2 -g2 -mmcu=atmega32u4 -fshort-enums -fno-inline-small-functions -fpack-struct -Wall -fno-strict-aliasing -funsigned-char -funsigned-bitfields -ffunction-sections -DARCH=ARCH_AVR8 -DBOARD=BOARD_LEONARDO -DF_USB=16000000UL -DF_CPU=16000000UL -mrelax -fno-jump-tables -x c -Os -Wstrict-prototypes -DUSE_LUFA_CONFIG_HEADER \
     -c                                                           \
     -g                                                           \
     -Os                                                          \
@@ -230,7 +235,7 @@ AUTODETECT_OBJECTS=""
 for source in ${AUTODETECT_SOURCES};
 do
   OBJ=${BUILD_DIR}/$(basename ${source}).o
-  if [[ ${source} =~ *.c ]]; then
+  if [[ ${source} =~ \.c$ ]]; then
     avr-gcc ${C_CORE_FLAGS} ${AUTODETECT_INCLUDES} ${source} -o ${OBJ}
   else
     avr-g++ ${CXX_CORE_FLAGS} ${AUTODETECT_INCLUDES} ${source} -o ${OBJ}
@@ -239,7 +244,7 @@ do
 done
 
 echo "Linking project.."
-avr-gcc ${LD_FLAGS} ${AUTODETECT_INCLUDES} -o ${ELF} ${AUTODETECT_OBJECTS} ${AVR_CORE} ${AUTODETECT_LIBRARIES} ${LD_FLAGS_SUFFIX}
+avr-gcc ${LD_FLAGS} ${AUTODETECT_INCLUDES} -o ${ELF} ${AUTODETECT_OBJECTS} ${AVR_CORE} ${XINPUT_LIB} ${AUTODETECT_LIBRARIES} ${LD_FLAGS_SUFFIX}
 
 echo "Building elf.."
 avr-objcopy -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 ${ELF} ${EEP}

@@ -4,3 +4,6 @@
 [submodule "arduino/std"]
 	path = arduino/std
 	url = https://github.com/adiog/embed-sparkfun-std
+[submodule "deps/xinput"]
+	path = deps/xinput
+	url = https://bitbucket.org/locomotor/artifact-XInputPadMicro
