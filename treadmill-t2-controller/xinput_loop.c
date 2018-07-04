@@ -7,14 +7,9 @@
 void xinput_loop(
         int leftFootX,
         int leftFootY,
-        int leftFootZ,
         int rightFootX,
         int rightFootY,
-        int rightFootZ,
-        int backpackX,
-        int backpackY,
-        int backpackZ
-
+        int compass
         )
 {
     uint8_t pad_up, pad_down, pad_left, pad_right, pad_y, pad_b, pad_x, pad_a, pad_black,
@@ -23,7 +18,7 @@ void xinput_loop(
 
     // Pins polling and gamepad status updates
     xbox_reset_watchdog();
-
+/*
     pad_up = !bit_check(PINC, 7);
     pad_down = !bit_check(PINB, 2);
     pad_left = !bit_check(PINB, 0);
@@ -113,14 +108,14 @@ void xinput_loop(
 
     gamepad_state.lt = pad_l * 0xFF;
     gamepad_state.rt = pad_r * 0xFF;
-
+*/
     gamepad_state.l_x = leftFootX;
     gamepad_state.l_y = leftFootY;
     gamepad_state.r_x = rightFootX;
     gamepad_state.r_y = rightFootY;
 
-    gamepad_state.lt = leftFootZ;
-    gamepad_state.rt = rightFootZ;
+    gamepad_state.lt = compass;
+    gamepad_state.rt = compass;
 
     xbox_send_pad_state();
 }

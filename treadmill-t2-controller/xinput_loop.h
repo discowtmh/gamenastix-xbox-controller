@@ -7,14 +7,9 @@ extern "C" {
 void xinput_loop(
         int leftFootX,
         int leftFootY,
-        int leftFootZ,
         int rightFootX,
         int rightFootY,
-        int rightFootZ,
-        int backpackX,
-        int backpackY,
-        int backpackZ
-
+        int compass
 
         );
 
