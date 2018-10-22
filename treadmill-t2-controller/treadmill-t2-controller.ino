@@ -13,11 +13,9 @@ uint32_t systemClockMillis = 0U;
 char buffer[256];
 int bufferIndex = 0;
 
-int leftFootX;
-int leftFootY;
-int rightFootX;
-int rightFootY;
-int compass;
+int leftFoot[3];
+int rightFoot[3];
+
 
 void readSerial()
 {
@@ -26,7 +24,7 @@ void readSerial()
         buffer[bufferIndex] = Serial1.read();
         if (buffer[bufferIndex] == '\n')
         {
-            sscanf(buffer, "%d %d %d %d %d", &leftFootX, &leftFootY, &rightFootX, &rightFootY, &compass);
+            sscanf(buffer, "%d %d %d %d %d %d", &leftFoot[0], &leftFoot[1], &leftFoot[2], &rightFoot[0], &rightFoot[1], &rightFoot[2]);
             bufferIndex = 0U;
         }
         else if (bufferIndex < 255)
@@ -56,13 +54,7 @@ void loop()
 
     if (systemClockMillis - xinputMillis > XINPUT_INTERVAL)
     {
-        xinput_loop(
-            leftFootX,
-            leftFootY,
-            rightFootX,
-            rightFootY,
-            compass
-        );
+        xinput_loop(leftFoot, rightFoot);
         xinputMillis = systemClockMillis;
     }
 }

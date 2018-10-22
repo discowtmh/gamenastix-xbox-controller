@@ -4,14 +4,7 @@
 extern "C" {
 #endif
 
-void xinput_loop(
-        int leftFootX,
-        int leftFootY,
-        int rightFootX,
-        int rightFootY,
-        int compass
-
-        );
+void xinput_loop(int leftFoot[3], int rightFoot[3]);
 
 #ifdef __cplusplus
 }
