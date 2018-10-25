@@ -16,7 +16,6 @@ ARDUINO_HEADER_ONLY_LIBRARIES="EEPROM"
 
 DEFAULT_DEVICE=`ls -1 /dev/ttyACM* | head -1`
 DEVICE=${1:-${DEFAULT_DEVICE}}
-[[ -z "${DEVICE}" ]] && echo "Device not found." && exit 1
 
 TOOL_DIR=${ARDUINO_SDK_PATH}/bin
 
@@ -250,6 +249,10 @@ echo "Building elf.."
 avr-objcopy -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0 ${ELF} ${EEP}
 avr-objcopy -O ihex -R .eeprom ${ELF} ${HEX}
 avr-size -A ${ELF}
+
+
+[[ -z "${DEVICE}" ]] && echo "Device not found." && exit 1
+
 
 echo "Flashing.."
 python reset.py ${DEVICE} && sleep 1

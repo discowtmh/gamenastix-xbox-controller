@@ -16,7 +16,6 @@ int bufferIndex = 0;
 int leftFoot[3];
 int rightFoot[3];
 
-
 void readSerial()
 {
     while (Serial1.available())

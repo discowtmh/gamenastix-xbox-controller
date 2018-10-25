@@ -1,9 +1,9 @@
 [submodule "arduino/sdk"]
 	path = arduino/sdk
-	url = https://github.com/adiog/embed-arduino-sdk
+	url = https://github.com/discowtmh/embed-arduino-sdk
 [submodule "arduino/std"]
 	path = arduino/std
-	url = https://github.com/adiog/embed-sparkfun-std
+	url = https://github.com/discowtmh/embed-arduino-std
 [submodule "deps/xinput"]
 	path = deps/xinput
-	url = https://bitbucket.org/locomotor/artifact-XInputPadMicro
+	url = https://github.com/discowtmh/XInputPadMicro
